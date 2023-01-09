@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="article-detail">
+<div class="article">
+    <h2>{{ post.title }}</h2> <p class="postdate">Created on {{ post.date }}</p>
+        <p class="p-2 posturl"><a href="{{ post.website_url }}">URL : {{ post.website_url }} </a></p>
+        <p class="author">By {{ post.author }}</p>
+    <br>
+    {% if user.is_authenticated %}
+        {% if user.id == post.author.id %}
+            <button type="button" class="btn btn-outline-info site-form">
+                <a href="{% url 'Update-Website' post.slug post.pk %}">Edit</a>
+            </button> &nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-outline-info site-form">
+                <a href="{% url 'Delete-Website' post.slug post.pk %}">Delete</a>
+            </button>
+            <br>
+        {% endif %}
+    {% else %}
+        <h1>Error:404 Not Found! Please Log In</h1>
+    {% endif %}
+</div>
+    <hr>
+    {% for rating in post.ratings.all %}
+    <h3>Rating(out of 5): {{rating.rating}}</h3>
+    {% endfor %}
+    <br>
+    <h1>Comments...</h1>
+    {% if not post.comments.all %}
+        No comments Yet...<a href="{% url 'add_comment' post.slug post.pk%}">Add Comment</a>
+    {% else %}
+        {% for comment in post.comments.all %}
+            <br>
+            <p class="postcomment">
+            <strong>
+                {{ comment.name }}
+                {{ comment.date_added }}
+            </strong>
+            <br>
+        {{ comment.body }}</p>
+        {% endfor %}
+            <a href="{% url 'add_comment' post.slug post.pk%}">Add Comment</a>
+    {% endif %}
+    <hr>
+    <br>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+</div>
+<div>
+    {{post.rating}}
+</div>
+{% endblock %}
